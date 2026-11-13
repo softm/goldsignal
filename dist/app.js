@@ -88,6 +88,20 @@
     toast: document.querySelector("#toast"),
   };
 
+  const requiredNodes = [
+    "currentPrice", "priceUnitHeading", "chartPriceUnit", "targetUnitLabel",
+    "calculationFormula", "marketInsight", "dailyBrief", "forecastRange",
+    "forecastPrice", "chart", "chartLine", "chartArea", "chartGrid", "chartLabels",
+    "chartEndpoint", "targetForm", "targetInput", "dataStatus"
+  ];
+  const missingNodes = requiredNodes.filter((key) => !els[key]);
+  if (missingNodes.length) {
+    const errorMessage = `화면 초기화 실패: ${missingNodes.join(", ")}`;
+    if (els.dataStatus) els.dataStatus.textContent = "화면 구성 오류 · 새로고침 필요";
+    console.error("[금시그널]", errorMessage);
+    return;
+  }
+
   const won = new Intl.NumberFormat("ko-KR", {
     style: "currency",
     currency: "KRW",
@@ -402,8 +416,10 @@
         els.todayLabel.textContent = new Intl.DateTimeFormat("ko-KR", { month: "long", day: "numeric" }).format(parsedDate);
       }
       render();
-    } catch (_) {
-      els.dataStatus.innerHTML = "<span></span> 기본 데이터 · 시뮬레이션";
+    } catch (error) {
+      console.warn("[금시그널] 금시세 자동 데이터 갱신 실패, 기본 가정을 사용합니다.", error);
+      els.dataStatus.innerHTML = "<span></span> 데이터 연결 실패 · 기본 가정";
+      els.priceCaption.textContent = "시장 데이터 연결 실패 · 아래 입력값은 시뮬레이션용 기본 가정";
       updateUnitDisplay();
     }
   }
@@ -569,6 +585,6 @@
   loadAutomatedMarketData();
 
   if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
-    window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js?v=20261025-unit5", { updateViaCache: "none" }).catch(() => {}));
+    window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js?v=20261113-startup-fix-1", { updateViaCache: "none" }).catch((error) => console.warn("금시그널 오프라인 캐시 등록 실패", error)));
   }
 })();
