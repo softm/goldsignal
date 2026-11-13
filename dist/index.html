@@ -59,11 +59,6 @@
           <span class="model-version">Scenario v1.4</span>
         </div>
 
-        <button class="profile-button" type="button" id="profileButton" aria-label="프로필 메뉴 열기">
-          <span class="profile-avatar">김</span>
-          <span><strong>개인 워크스페이스</strong><small>시뮬레이션 모드</small></span>
-          <span aria-hidden="true">•••</span>
-        </button>
       </aside>
 
       <main class="main" id="main-content" tabindex="-1">
@@ -74,6 +69,8 @@
           </div>
           <div class="topbar-actions">
             <div class="simulation-badge" id="dataStatus"><span></span> 데이터 불러오는 중</div>
+            <button class="topbar-button" id="notificationButton" type="button" hidden><span aria-hidden="true">♢</span> 시세 알림</button>
+            <span id="siteAccountSlot" aria-label="금시그널 계정"></span>
             <button class="topbar-button" id="resetAll" type="button"><span aria-hidden="true">↻</span> 기본값 리셋</button>
             <button class="topbar-button primary" id="shareInsight" type="button"><span aria-hidden="true">↗</span> 인사이트 공유</button>
             <button class="icon-button" id="themeButton" type="button" aria-label="화면 테마 전환">
@@ -357,6 +354,6 @@
     </nav>
 
     <div class="toast" id="toast" role="status" aria-live="polite">인사이트를 복사했어요.</div>
-  <script type="module" src="https://softm.github.io/shared/platform/v1/boot.mjs?site=goldsignal&amp;v=20261028"></script>
+  <script type="module" src="https://softm.github.io/shared/platform/v1/cloudflare-goldsignal-boot.mjs?site=goldsignal&amp;v=20261113"></script>
 </body>
 </html>
