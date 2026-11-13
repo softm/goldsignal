@@ -84,6 +84,7 @@
     targetForm: document.querySelector("#targetForm"),
     targetInput: document.querySelector("#targetInput"),
     targetStatus: document.querySelector("#targetStatus"),
+    notificationButton: document.querySelector("#notificationButton"),
     toast: document.querySelector("#toast"),
   };
 
@@ -309,6 +310,35 @@
     showToast.timeout = window.setTimeout(() => els.toast.classList.remove("is-visible"), 1900);
   }
 
+  function syncNativeNotificationButton() {
+    const button = els.notificationButton;
+    const bridge = window.GoldSignalAndroid;
+    if (!button || !bridge || typeof bridge.notificationPermissionState !== "function") return;
+    button.hidden = false;
+    let state = "blocked";
+    try { state = bridge.notificationPermissionState(); } catch (_) { /* Native bridge unavailable. */ }
+    button.textContent = state === "granted" ? "🔔 알림 켜짐" : "🔕 시세 알림";
+    button.title = state === "granted"
+      ? "Android 알림 설정 열기"
+      : "금시세 인사이트 알림 권한 요청";
+  }
+
+  function bindNativeNotifications() {
+    if (!els.notificationButton || !window.GoldSignalAndroid) return;
+    syncNativeNotificationButton();
+    els.notificationButton.addEventListener("click", () => {
+      try {
+        const bridge = window.GoldSignalAndroid;
+        const state = bridge.notificationPermissionState?.();
+        if (state === "granted") bridge.openNotificationSettings?.();
+        else bridge.requestNotificationPermission?.();
+      } catch (_) {
+        showToast("Android 알림 설정을 열지 못했습니다.");
+      }
+    });
+    window.addEventListener("goldsignal:notification-state", syncNativeNotificationButton);
+  }
+
   function formatCollectedAt(isoString) {
     const date = new Date(isoString);
     if (Number.isNaN(date.getTime())) return "최근 수집";
@@ -484,10 +514,6 @@
     showToast(document.body.classList.contains("dark") ? "다크 테마를 켰어요." : "라이트 테마를 켰어요.");
   });
 
-  document.querySelector("#profileButton").addEventListener("click", () => {
-    showToast("개인 설정은 다음 버전에서 제공됩니다.");
-  });
-
   const today = new Intl.DateTimeFormat("ko-KR", { month: "long", day: "numeric" }).format(new Date());
   els.todayLabel.textContent = today;
 
@@ -526,6 +552,7 @@
   if ("ResizeObserver" in window) new ResizeObserver(queueNavigationUpdate).observe(scrollRoot);
   queueNavigationUpdate();
 
+  bindNativeNotifications();
   render();
   loadAutomatedMarketData();
 
