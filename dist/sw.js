@@ -1,9 +1,9 @@
-const CACHE_NAME = "gold-signal-v5-unit5-suite-20261028";
+const CACHE_NAME = "gold-signal-v6-20261113-startup-fix-1";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./styles.css?v=20261025-unit5",
-  "./app.js?v=20261025-unit5",
+  "./app.js?v=20261113-startup-fix-1",
   "./adfit-config.js?v=20261022-adfit1",
   "./adfit.js?v=20261022-adfit1",
   "./adfit.css?v=20261022-adfit1",
@@ -37,6 +37,23 @@ self.addEventListener("fetch", (event) => {
       fetch(event.request)
         .then((response) => {
           if (!response.ok) throw new Error(`market data ${response.status}`);
+          const copy = response.clone();
+          event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy)));
+          return response;
+        })
+        .catch(async () => (await caches.match(event.request)) || Response.error()),
+    );
+    return;
+  }
+
+  // Always revalidate same-origin scripts/styles before using cached copies.
+  // Old cache-first app.js was referencing a removed #profileButton and could
+  // prevent market calculation and charts from initializing after an HTML update.
+  if (/\.(?:js|mjs|css)$/.test(requestUrl.pathname)) {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          if (!response.ok) throw new Error(`asset HTTP ${response.status}`);
           const copy = response.clone();
           event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy)));
           return response;
