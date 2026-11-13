@@ -49,7 +49,7 @@ self.addEventListener("fetch", (event) => {
   // Always revalidate same-origin scripts/styles before using cached copies.
   // Old cache-first app.js was referencing a removed #profileButton and could
   // prevent market calculation and charts from initializing after an HTML update.
-  if (/\\.(?:js|mjs|css)$/.test(requestUrl.pathname)) {
+  if (/\.(?:js|mjs|css)$/.test(requestUrl.pathname)) {
     event.respondWith(
       fetch(event.request)
         .then((response) => {
