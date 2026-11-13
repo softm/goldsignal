@@ -323,9 +323,20 @@
       : "금시세 인사이트 알림 권한 요청";
   }
 
+  function syncNativeNotificationTarget() {
+    const bridge = window.GoldSignalAndroid;
+    if (!bridge || typeof bridge.saveNotificationTargetPerGram !== "function") return;
+    try {
+      bridge.saveNotificationTargetPerGram(getSavedTargetPerGram() || 0);
+    } catch (_) {
+      /* Native bridge unavailable. */
+    }
+  }
+
   function bindNativeNotifications() {
     if (!els.notificationButton || !window.GoldSignalAndroid) return;
     syncNativeNotificationButton();
+    syncNativeNotificationTarget();
     els.notificationButton.addEventListener("click", () => {
       try {
         const bridge = window.GoldSignalAndroid;
@@ -486,6 +497,7 @@
     }
     try {
       localStorage.setItem(TARGET_STORAGE_KEY, String(target / getPriceUnit().grams));
+      syncNativeNotificationTarget();
       updateTargetStatus(getCurrentPrice());
     } catch (_) {
       showToast("브라우저 저장 기능이 차단되어 있습니다.");
