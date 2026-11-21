@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-20T20:29:00.364Z",
+  "generatedAt": "2026-11-21T07:20:44.434Z",
   "market": {
-    "goldUsdOz": 3519.949951,
-    "usdKrw": 1334.05,
+    "goldUsdOz": 3539,
+    "usdKrw": 1334.71,
     "domesticPremiumPct": 0,
-    "goldUpdatedAt": "2026-11-20T20:28:36Z",
-    "fxDate": "2026-11-20"
+    "goldUpdatedAt": "2026-11-21T07:20:37Z",
+    "fxDate": "2026-11-21"
   },
   "sources": [
     {
@@ -183,6 +183,11 @@
       "date": "2026-11-20",
       "goldUsdOz": 3519.949951,
       "usdKrw": 1334.05
+    },
+    {
+      "date": "2026-11-21",
+      "goldUsdOz": 3539,
+      "usdKrw": 1334.71
     }
   ]
 }
